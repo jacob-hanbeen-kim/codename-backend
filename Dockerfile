@@ -28,4 +28,4 @@ EXPOSE 8080
 USER nonroot:nonroot
 
 # Run the executable
-CMD ["/codename-backend"]
+ENTRYPOINT ["/codename-backend"]
