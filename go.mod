@@ -1,4 +1,4 @@
-module github.com/jacob-hanbeen-kim/codename-practice/Backend
+module github.com/jacob-hanbeen-kim/codename-backend
 
 go 1.19
 
