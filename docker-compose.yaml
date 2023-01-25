@@ -1,5 +1,5 @@
 services:
-  frontend:
+  backend:
     image: beesoo/cpcpro-be-hub:dev
     container_name: backend-dev
     ports:
