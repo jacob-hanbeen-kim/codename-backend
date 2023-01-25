@@ -13,7 +13,7 @@ COPY . .
 # Build the Go app
 RUN go build -o /codename-backend
 
-FROM gcr.io/distroless/bbase-debian10
+FROM gcr.io/distroless/base-debian10
 
 WORKDIR /
 
