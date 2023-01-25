@@ -14,10 +14,18 @@ RUN go get -u github.com/gin-gonic/gin
 COPY . .
 
 # Build the Go app
-RUN go build -o . .
+RUN go build -o /codename-backend
+
+FROM gcr.io/distroless/base-debian10
+
+WORKDIR /
+
+COPY --from=build /codename-backend /codename-backend
 
 # This container exposes port 8000 to the outside world
 EXPOSE 8080
 
+USER nonroot:nonroot
+
 # Run the executable
-CMD ["go run main.go"]
+CMD ["/codename-backend"]
