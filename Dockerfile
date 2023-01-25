@@ -1,4 +1,4 @@
-FROM golang:1.19-alpine as build
+FROM golang:1.19-alpine
 # Set the Current Working Directory inside the container
 WORKDIR /app
 
@@ -14,18 +14,10 @@ RUN go get -u github.com/gin-gonic/gin
 COPY . .
 
 # Build the Go app
-RUN go build -o /codename-backend
-
-FROM gcr.io/distroless/base-debian10
-
-WORKDIR /
-
-COPY --from=build /codename-backend /codename-backend
+RUN go build -o . .
 
 # This container exposes port 8000 to the outside world
 EXPOSE 8080
 
-USER nonroot:nonroot
-
 # Run the executable
-ENTRYPOINT ["/codename-backend"]
+CMD ["go run main.go"]
