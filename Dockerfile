@@ -7,17 +7,14 @@ COPY go.mod .
 COPY go.sum .
 
 RUN go mod download
-RUN apk add ca-certificates
-RUN apk add curl
-RUN go get -u github.com/gin-gonic/gin
 
 COPY . .
 
 # Build the Go app
-RUN go build -o . .
+RUN go build -o /codename-backend
 
 # This container exposes port 8000 to the outside world
 EXPOSE 8080
 
 # Run the executable
-CMD ["go run main.go"]
+CMD ["/codename-backend"]
