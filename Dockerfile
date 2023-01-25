@@ -1,4 +1,4 @@
-FROM golang:1.19-alpine AS build
+FROM golang:1.19-buster AS build
 # Set the Current Working Directory inside the container
 WORKDIR /app
 
@@ -7,11 +7,13 @@ COPY go.mod .
 COPY go.sum .
 
 RUN go mod download
+RUN go get -u github.com/gin-gonic/gin
 
 COPY . .
 
-# Build the Go app
 RUN go build -o /codename-backend
+
+# Build the Go app
 
 FROM gcr.io/distroless/base-debian10
 
@@ -25,4 +27,4 @@ EXPOSE 8080
 USER nonroot:nonroot
 
 # Run the executable
-CMD ["/codename-backend"]
+ENTRYPOINT ["/codename-backend"]
