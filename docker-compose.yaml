@@ -1,0 +1,6 @@
+services:
+  frontend:
+    image: beesoo/cpcpro-be-hub:dev
+    container_name: backend-dev
+    ports:
+      - "8000:8080"

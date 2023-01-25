@@ -1,6 +1,6 @@
 FROM golang:1.19-alpine
 # Set the Current Working Directory inside the container
-WORKDIR /app/Backend
+WORKDIR /app
 
 # We want to populate the module cache based on the go.{mod,sum} files.
 COPY go.mod .
@@ -20,5 +20,4 @@ RUN go build -o . .
 EXPOSE 8080
 
 # Run the executable
-CMD ["./Backend"]
-
+CMD ["go run main.go"]
