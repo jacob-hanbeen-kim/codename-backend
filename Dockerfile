@@ -1,4 +1,4 @@
-FROM golang:1.19-alpine
+FROM golang:1.19-alpine AS build
 # Set the Current Working Directory inside the container
 WORKDIR /app
 
@@ -13,8 +13,16 @@ COPY . .
 # Build the Go app
 RUN go build -o /codename-backend
 
+FROM gcr.io/distroless/bbase-debian10
+
+WORKDIR /
+
+COPY --from=build /codename-backend /codename-backend
+
 # This container exposes port 8000 to the outside world
 EXPOSE 8080
+
+USER nonroot:nonroot
 
 # Run the executable
 CMD ["/codename-backend"]
