@@ -1,23 +1,18 @@
 package main
 
 import (
-	"context"
-
-	"github.com/jacob-hanbeen-kim/codename-backend/app"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/mongo/readpref"
+	"github.com/jacob-hanbeen-kim/codename-backend/app/app"
 )
 
 func main() {
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI("mongodb://localhost:27017"))
-	if err != nil {
-		panic(err)
-	}
+	// client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI("mongodb://localhost:27017"))
+	// if err != nil {
+	// 	panic(err)
+	// }
 
-	if err := client.Ping(context.TODO(), readpref.Primary()); err != nil {
-		panic(err)
-	}
+	// if err := client.Ping(context.TODO(), readpref.Primary()); err != nil {
+	// 	panic(err)
+	// }
 
 	app.Start()
 }
