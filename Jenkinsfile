@@ -24,6 +24,7 @@ pipeline {
         steps {
             sh script: '''\
             docker-compose down --rmi all -v --remove-orphans
+            echo y | docker image prune -a
             docker-compose up -d
             ''', returnStdout: true
         }
