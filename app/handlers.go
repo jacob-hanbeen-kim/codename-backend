@@ -1,43 +1,93 @@
 package app
 
 import (
+	"context"
+	"fmt"
+	"log"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type TestSample struct {
-	Id      string `json:"id"`
-	Name    string `json:"name"`
-	Headers string `json:"header"`
-	Body    string `json:"body"`
-	Method  string `json:"method"`
-	Url     string `json:"url"`
+	Name    string `json:"name" bson:"name"`
+	Headers string `json:"header" bson:"header"`
+	Body    string `json:"body" bson:"body"`
+	Method  string `json:"method" bson:"method"`
+	Url     string `json:"url" bson:"url"`
 }
 
-var testSamples = []TestSample{
-	{Id: "CodeName",
-		Name:    "Example API Call",
-		Headers: "Hello Jacob and Paul",
-		Body:    "",
-		Method:  "",
-		Url:     ""},
+type Testing struct {
+	Title string `json:"title" bson:"title"`
 }
 
-func getTests(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, testSamples)
+// var testSamples = []TestSample{
+// 	{
+// 		Name:    "Example API Call",
+// 		Headers: "Hello Jacob and Paul",
+// 		Body:    "",
+// 		Method:  "",
+// 		Url:     ""},
+// }
+
+func getTest(c *gin.Context) {
+	var test Testing
+	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb+srv://codename:codename123@cluster0.o3azdm6.mongodb.net/?retryWrites=true&w=majority"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	err = client.Connect(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer client.Disconnect(ctx)
+
+	// codenameDatabase := client.Database("codeName")
+	testCollection := client.Database("codeName").Collection("tests")
+	fmt.Println(testCollection)
+	// filter := bson.D{{"title", "testing"}}
+
+	err = testCollection.FindOne(context.TODO(), bson.D{}).Decode(&test)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			// This error means your query did not match any documents.
+			return
+		}
+		panic(err)
+	}
+
+	c.IndentedJSON(http.StatusOK, test)
 }
 
 func postTest(c *gin.Context) {
 	var newTest TestSample
 
-	// Call BindJSON to bind the received JSON to
-	// newAlbum.
+	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb+srv://codename:codename123@cluster0.o3azdm6.mongodb.net/?retryWrites=true&w=majority"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	err = client.Connect(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer client.Disconnect(ctx)
+	testCollection := client.Database("codeName").Collection("tests")
+
 	if err := c.BindJSON(&newTest); err != nil {
+		c.IndentedJSON(http.StatusBadRequest, "Empty Request Body")
 		return
 	}
 
 	// Add the new album to the slice.
-	testSamples = append(testSamples, newTest)
-	c.IndentedJSON(http.StatusCreated, testSamples)
+	insertResult, err := testCollection.InsertOne(ctx, newTest)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(insertResult.InsertedID)
 }

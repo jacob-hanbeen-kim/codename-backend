@@ -8,7 +8,7 @@ func Start() {
 	router := gin.Default()
 
 	//define routes
-	router.GET("/test", getTests)
+	router.GET("/test", getTest)
 	router.POST("/test", postTest)
 	//starting server by default localhost :8080
 	router.Run()
