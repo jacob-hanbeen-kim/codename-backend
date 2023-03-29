@@ -39,7 +39,7 @@ func main() {
 	// userCollection := codenameDatabase.Collection("user")
 
 	testResponse, err := testCollection.InsertOne(ctx, bson.D{
-		{Key: "title", Value: "testing"},
+		{Key: "title", Value: "hello"},
 	})
 
 	if err != nil {

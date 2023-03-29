@@ -11,6 +11,7 @@ func Start() {
 	router.GET("/test", getTest)
 	router.POST("/test", postTest)
 	router.PUT("/test", updateTest)
+	router.DELETE("/test", deleteTest)
 	//starting server by default localhost :8080
 	router.Run()
 }

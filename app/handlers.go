@@ -114,19 +114,48 @@ func updateTest(c *gin.Context) {
 
 	testCollection := client.Database("codeName").Collection("tests")
 	filter := bson.D{{Key: "name", Value: newTest.Name}}
-	update := bson.D{
-		{"$set", bson.D{
-			{Key: "name", Value: newTest.Name},
-			{Key: "header", Value: newTest.Header},
-			{Key: "body", Value: newTest.Body},
-			{Key: "method", Value: newTest.Method},
-			{Key: "url", Value: newTest.Url},
-		}}}
+	update := bson.D{{"$set", bson.D{
+		{Key: "name", Value: newTest.Name},
+		{Key: "header", Value: newTest.Header},
+		{Key: "body", Value: newTest.Body},
+		{Key: "method", Value: newTest.Method},
+		{Key: "url", Value: newTest.Url},
+	}}}
 
 	result, err := testCollection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
 		return
 	}
+
 	fmt.Println(result.MatchedCount, result.ModifiedCount)
 	// c.IndentedJSON(http.StatusOK, updatedTest)
+}
+
+func deleteTest(c *gin.Context) {
+	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb+srv://codename:codename123@cluster0.o3azdm6.mongodb.net/?retryWrites=true&w=majority"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	err = client.Connect(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer client.Disconnect(ctx)
+
+	name := c.Query("name")
+	if name == "" {
+		c.IndentedJSON(http.StatusBadRequest, "Query Parameter not valid")
+		return
+	}
+
+	testCollection := client.Database("codeName").Collection("tests")
+	filter := bson.D{{Key: "name", Value: name}}
+
+	result, err := testCollection.DeleteOne(context.TODO(), filter)
+	if err != nil {
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, result.DeletedCount)
 }
